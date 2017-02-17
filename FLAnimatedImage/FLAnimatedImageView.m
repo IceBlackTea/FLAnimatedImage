@@ -32,6 +32,7 @@
 
 @property (nonatomic, assign) BOOL shouldAnimate; // Before checking this value, call `-updateShouldAnimate` whenever the animated image or visibility (window, superview, hidden, alpha) has changed.
 @property (nonatomic, assign) BOOL needsDisplayWhenImageBecomesAvailable;
+@property (nonatomic, assign) BOOL autoPlay;
 
 #if defined(DEBUG) && DEBUG
 @property (nonatomic, weak) id<FLAnimatedImageViewDebugDelegate> debug_delegate;
@@ -87,6 +88,7 @@
 - (void)commonInit
 {
     self.runLoopMode = [[self class] defaultRunLoopMode];
+    self.autoPlay = YES;
 }
 
 
@@ -95,6 +97,11 @@
 
 - (void)setAnimatedImage:(FLAnimatedImage *)animatedImage
 {
+    [self setAnimatedImage:animatedImage autoPlay:YES];
+}
+
+- (void)setAnimatedImage:(FLAnimatedImage *)animatedImage autoPlay:(BOOL)autoPlay {
+    self.autoPlay = autoPlay;
     if (![_animatedImage isEqual:animatedImage]) {
         if (animatedImage) {
             // Clear out the image.
@@ -121,14 +128,13 @@
         
         // Start animating after the new animated image has been set.
         [self updateShouldAnimate];
-        if (self.shouldAnimate) {
+        if (self.shouldAnimate && autoPlay) {
             [self startAnimating];
         }
         
         [self.layer setNeedsDisplay];
     }
 }
-
 
 #pragma mark - Life Cycle
 
@@ -146,6 +152,10 @@
 {
     [super didMoveToSuperview];
     
+    if (!self.autoPlay) {
+        return;
+    }
+    
     [self updateShouldAnimate];
     if (self.shouldAnimate) {
         [self startAnimating];
@@ -159,6 +169,10 @@
 {
     [super didMoveToWindow];
     
+    if (!self.autoPlay) {
+        return;
+    }
+    
     [self updateShouldAnimate];
     if (self.shouldAnimate) {
         [self startAnimating];
@@ -170,6 +184,10 @@
 - (void)setAlpha:(CGFloat)alpha
 {
     [super setAlpha:alpha];
+    
+    if (!self.autoPlay) {
+        return;
+    }
 
     [self updateShouldAnimate];
     if (self.shouldAnimate) {
@@ -182,6 +200,10 @@
 - (void)setHidden:(BOOL)hidden
 {
     [super setHidden:hidden];
+    
+    if (!self.autoPlay) {
+        return;
+    }
 
     [self updateShouldAnimate];
     if (self.shouldAnimate) {
@@ -280,6 +302,11 @@ static NSUInteger gcd(NSUInteger a, NSUInteger b)
 
 - (void)startAnimating
 {
+    if (!self.autoPlay) {
+        self.autoPlay = YES;
+        [self updateShouldAnimate];
+    }
+    
     if (self.animatedImage) {
         // Lazily create the display link.
         if (!self.displayLink) {
@@ -322,7 +349,6 @@ static NSUInteger gcd(NSUInteger a, NSUInteger b)
         [super stopAnimating];
     }
 }
-
 
 - (BOOL)isAnimating
 {
