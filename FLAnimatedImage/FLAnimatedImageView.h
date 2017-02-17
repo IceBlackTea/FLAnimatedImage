@@ -33,7 +33,7 @@
 // To keep scrolling smooth on single-core devices such as iPhone 3GS/4 and iPod Touch 4th gen, the default run loop mode is NSDefaultRunLoopMode. Otherwise, the default is NSDefaultRunLoopMode.
 @property (nonatomic, copy) NSString *runLoopMode;
 
-// Set `animatedImage` with auto play control, if `NO` the Gif won't play immediately
+// Set `animatedImage` with auto play control, if `NO` the Gif won't play immediately until you call `startAnimating`
 - (void)setAnimatedImage:(FLAnimatedImage *)animatedImage autoPlay:(BOOL)autoPlay;
 
 @end

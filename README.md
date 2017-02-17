@@ -10,6 +10,13 @@ It's a well-tested [component that powers all GIFs in Flipboard](http://engineer
 
 ![Flipboard playing multiple GIFs](https://github.com/Flipboard/FLAnimatedImage/raw/master/images/flanimatedimage-demo-player.gif)
 
+## About this fork
+- Add auto play control to `FLAnimatedImageView`
+```objective-c
+// Set `animatedImage` with auto play control, if `NO` the Gif won't play immediately until you call `startAnimating`
+- (void)setAnimatedImage:(FLAnimatedImage *)animatedImage autoPlay:(BOOL)autoPlay;
+```
+
 ## Who is this for?
 
 - Apps that don't support animated GIFs yet
